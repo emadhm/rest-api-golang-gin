@@ -14,6 +14,7 @@ func Create (c *gin.Context)  {
 	var body struct{
 
 		Name  string
+		Email string
 		Role  string
 		Password  string
 	}
@@ -21,7 +22,7 @@ func Create (c *gin.Context)  {
 
 	c.Bind(&body)
 
-	if body.Name == "" || body.Role == "" || body.Password == "" {
+	if body.Name == "" || body.Email == "" || body.Role == "" || body.Password == "" {
 
 			 c.JSON(500, gin.H{
 				"messege": "all data required",
@@ -40,7 +41,7 @@ func Create (c *gin.Context)  {
 		}
 	
 
-	post := models.Users{Name: body.Name, Role: body.Role, Password: string(hash)}
+	post := models.Users{Name: body.Name, Email: body.Email, Role: body.Role, Password: string(hash)}
 
     result := config.DB.Create(&post)
 
@@ -117,6 +118,7 @@ func Update (c *gin.Context)  {
 		var body struct{
 
 		Name  string
+		Email string
 		Role  string
 		Password  string
 	}
@@ -136,7 +138,7 @@ func Update (c *gin.Context)  {
 
 			c.Bind(&body)
 
-		if body.Name == "" || body.Role == "" || body.Password == "" {
+		if body.Name == "" ||  body.Email == "" ||  body.Role == "" ||  body.Password == "" {
 			 c.JSON(400, gin.H{
 				"message": "Invalid data",
 		     })
@@ -153,6 +155,7 @@ func Update (c *gin.Context)  {
 		}
         
 		user.Name = body.Name
+		user.Email= body.Email
 		user.Role = body.Role
 		user.Password = string(hash)
 		
