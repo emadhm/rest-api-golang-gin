@@ -1,8 +1,12 @@
 package auth
 
 import (
+	"os"
+	"time"
+
 	"emad.com/config"
 	"emad.com/models"
+	"github.com/dgrijalva/jwt-go"
 	"github.com/gin-gonic/gin"
 	"github.com/jinzhu/gorm"
 	"golang.org/x/crypto/bcrypt"
@@ -13,7 +17,6 @@ var body struct {
 		 Email string
 		 Password string
 	}
-
 
 func Login (c *gin.Context)  {
 
@@ -49,17 +52,31 @@ func Login (c *gin.Context)  {
       }
 
 
+	   token, err := generateJWT(int(user.ID))
+		if err != nil {
+			 c.JSON(400, gin.H{
+					"messege": err,
+				})
+				return
+		}
 	
+
+		checkAuth(int(user.ID),token)
+
+         c.JSON(200, gin.H{
+			"message": "loged in seccessfully",
+			"user": user,
+			"token":token,
+		 })
+
+		 return
 }
 
 
 
  func generateJWT(id int) (string, error) {
 
-	err := godotenv.Load()
-	if err != nil {
-		return "",err
-  	 }
+	
      secretKey := os.Getenv("SECRET_KEY")
 
 
@@ -76,4 +93,37 @@ func Login (c *gin.Context)  {
 	}
 
 	return tokenString, err
+}
+
+
+
+func checkAuth (id int, token string) error {
+
+	 var auth = new(models.Auths)
+	
+   if err := config.DB.Where("user_id = ?", id).First(&auth).Error; err != nil {
+
+		if err == gorm.ErrRecordNotFound {
+
+			auth.User_id = id
+			auth.Token = token
+
+			if err := config.DB.Create(&auth).Error; err != nil {
+
+		     return err
+	        }
+		}
+	    	
+		return err
+	}
+
+	 auth.User_id = id
+	 auth.Token = token
+
+    if err := config.DB.Save(&auth).Error; err!=nil {
+		 return err
+	}
+	 
+	return nil
+
 }

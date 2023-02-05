@@ -54,6 +54,7 @@ func Create (c *gin.Context)  {
 	}
 
 	c.JSON(200, gin.H{
+		"messege": "user created seccessfully",
 		"user": result,
 	})
 

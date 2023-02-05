@@ -1,6 +1,7 @@
 package routes
 
 import (
+	"emad.com/auth"
 	"emad.com/controllers"
 	"github.com/gin-gonic/gin"
 )
@@ -8,6 +9,9 @@ import (
 
 
 func SetUpRowters (router *gin.Engine)  {
+
+	router.POST("/api/login", auth.Login)
+
 
 	router.POST("/api/user/create", controllers.Create)
 	router.GET("/api/user/list", controllers.List)

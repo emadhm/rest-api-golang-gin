@@ -19,6 +19,7 @@ func ConnectDB()  {
 
 	db.AutoMigrate(
 		&models.Users{}, 
+		&models.Auths{},
 	)
 	DB = db
 	
