@@ -3,7 +3,6 @@ package auth
 import (
 	"os"
 	"time"
-
 	"emad.com/config"
 	"emad.com/models"
 	"github.com/dgrijalva/jwt-go"
